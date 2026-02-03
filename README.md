@@ -1,4 +1,4 @@
-# Ecommerce Brownfield Application
+# Ecommerce Application
 
 ## Purpose
 This repository contains a brown-field style e-commerce application
