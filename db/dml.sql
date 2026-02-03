@@ -2,16 +2,22 @@
 -- DML SCRIPT FOR ECOMMERCE BROWNFIELD APPLICATION
 -- PostgreSQL Compatible
 -- =========================================================
--- This script seeds initial data required to run the
--- application (users, carts, and products).
+-- Contains:
+-- 1. Seed data (users, products)
+-- 2. Application-level data mutations
+-- Cart lifecycle is LAZY and EPHEMERAL
+-- =========================================================
+
+
+-- =========================================================
+-- SECTION 1: SEED DATA
 -- =========================================================
 
 
 -- ---------------------------------------------------------
--- 1. USERS
+-- 1. USERS (Seed Data)
 -- ---------------------------------------------------------
--- Cartoon character users for login and profile screens
--- Passwords are stored in plain text for demo purposes only
+-- No carts created for seed users
 -- ---------------------------------------------------------
 
 INSERT INTO users (username, password, full_name, email) VALUES
@@ -23,21 +29,7 @@ INSERT INTO users (username, password, full_name, email) VALUES
 
 
 -- ---------------------------------------------------------
--- 2. CART
--- ---------------------------------------------------------
--- Create exactly one cart per user
--- Depends on USERS table
--- ---------------------------------------------------------
-
-INSERT INTO cart (user_id)
-SELECT user_id
-FROM users;
-
-
--- ---------------------------------------------------------
--- 3. PRODUCTS
--- ---------------------------------------------------------
--- Seed product catalog used by Product Search screen
+-- 2. PRODUCTS (Seed Data)
 -- ---------------------------------------------------------
 
 INSERT INTO products (product_name, description, price, available_qty) VALUES
@@ -61,6 +53,90 @@ INSERT INTO products (product_name, description, price, available_qty) VALUES
 ('Camera', 'Digital camera', 500.00, 8),
 ('Microphone', 'USB microphone', 85.00, 20),
 ('Gaming Chair', 'Ergonomic gaming chair', 300.00, 6);
+
+
+-- =========================================================
+-- SECTION 2: APPLICATION DML OPERATIONS
+-- =========================================================
+
+
+-- ---------------------------------------------------------
+-- 3. USER SIGN-UP
+-- ---------------------------------------------------------
+-- NO cart creation at signup
+-- ---------------------------------------------------------
+
+INSERT INTO users (username, password, full_name, email)
+VALUES (?, ?, ?, ?);
+
+
+-- ---------------------------------------------------------
+-- 4. CREATE CART (Lazy Creation)
+-- ---------------------------------------------------------
+-- Called ONLY when first product is added
+-- ---------------------------------------------------------
+
+INSERT INTO cart (user_id)
+VALUES (?);
+
+
+-- ---------------------------------------------------------
+-- 5. ADD PRODUCT TO CART
+-- ---------------------------------------------------------
+
+INSERT INTO cart_items (cart_id, product_id, quantity)
+VALUES (?, ?, ?);
+
+
+-- ---------------------------------------------------------
+-- 6. UPDATE CART ITEM QUANTITY
+-- ---------------------------------------------------------
+
+UPDATE cart_items
+SET quantity = ?
+WHERE cart_id = ? AND product_id = ?;
+
+
+-- ---------------------------------------------------------
+-- 7. REMOVE PRODUCT FROM CART
+-- ---------------------------------------------------------
+
+DELETE FROM cart_items
+WHERE cart_id = ? AND product_id = ?;
+
+
+-- ---------------------------------------------------------
+-- 8. DELETE CART WHEN EMPTY
+-- ---------------------------------------------------------
+-- Called when last item is removed
+-- ---------------------------------------------------------
+
+DELETE FROM cart
+WHERE cart_id = ?;
+
+
+-- ---------------------------------------------------------
+-- 9. USER LOGOUT – CLEAR CART
+-- ---------------------------------------------------------
+-- Clears cart + cart items on logout
+-- ---------------------------------------------------------
+
+DELETE FROM cart_items
+WHERE cart_id = ?;
+
+DELETE FROM cart
+WHERE cart_id = ?;
+
+
+-- ---------------------------------------------------------
+-- 10. USER PROFILE UPDATE
+-- ---------------------------------------------------------
+
+UPDATE users
+SET full_name = ?,
+    email = ?
+WHERE user_id = ?;
+
 
 -- =========================================================
 -- END OF DML SCRIPT
