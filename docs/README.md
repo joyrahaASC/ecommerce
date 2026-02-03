@@ -6,13 +6,18 @@ for the Ecommerce Brownfield Application.
 The documentation will evolve incrementally as the system grows and as
 agentic AI use cases are introduced.
 
-## Intended Contents
+## Available Documents
+
+- **Database Schema Diagram**
+  - [`ecommerce_db_schema.pdf`](./ecommerce_db_schema.pdf)
+  - Logical ER-style schema including tables, primary keys,
+    foreign keys, and relationships.
+
+## Planned Documents
 - High-level system architecture
 - UI ↔ API ↔ Database interaction flows
 - API contracts and payload definitions
-- Database design explanations
-- Agentic AI flow and orchestration documentation
-- Key technical and architectural decisions
+- Agentic AI orchestration and flow documentation
 
 ## Guiding Principles
 - Keep documentation lightweight and purposeful
