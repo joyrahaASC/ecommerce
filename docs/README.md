@@ -13,6 +13,9 @@ agentic AI use cases are introduced.
   - Logical ER-style schema including tables, primary keys,
     foreign keys, and relationships.
 
+- **Ecom App Features List**
+  - [`EcomApp_FeatureList.docx`](./EcomApp_FeatureList.docx)
+
 ## Planned Documents
 - High-level system architecture
 - UI ↔ API ↔ Database interaction flows
