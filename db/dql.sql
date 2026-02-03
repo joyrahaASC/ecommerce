@@ -1,8 +1,8 @@
 -- =========================================================
--- DQL SCRIPT FOR ECOMMERCE APPLICATION
+-- DQL SCRIPT FOR ECOMMERCE BROWNFIELD APPLICATION
 -- PostgreSQL Compatible
 -- =========================================================
--- This file contains ONLY SELECT queries
+-- Contains ONLY read (SELECT) queries
 -- =========================================================
 
 
@@ -47,7 +47,9 @@ WHERE product_name ILIKE '%' || ? || '%';
 
 
 -- ---------------------------------------------------------
--- 4. GET CART ID FOR USER
+-- 4. CHECK IF CART EXISTS FOR USER
+-- ---------------------------------------------------------
+-- Used before lazy cart creation
 -- ---------------------------------------------------------
 
 SELECT cart_id
@@ -56,7 +58,7 @@ WHERE user_id = ?;
 
 
 -- ---------------------------------------------------------
--- 5. VIEW CART WITH ITEM TOTALS
+-- 5. VIEW CART ITEMS
 -- ---------------------------------------------------------
 
 SELECT
@@ -72,11 +74,22 @@ WHERE c.user_id = ?;
 
 
 -- ---------------------------------------------------------
--- 6. VIEW CART GRAND TOTAL
+-- 6. CART ITEM COUNT
+-- ---------------------------------------------------------
+-- Used to detect empty cart
+-- ---------------------------------------------------------
+
+SELECT COUNT(*) AS item_count
+FROM cart_items
+WHERE cart_id = ?;
+
+
+-- ---------------------------------------------------------
+-- 7. CART GRAND TOTAL
 -- ---------------------------------------------------------
 
 SELECT
-    SUM(p.price * ci.quantity) AS cart_total
+    COALESCE(SUM(p.price * ci.quantity), 0) AS cart_total
 FROM cart c
 JOIN cart_items ci ON c.cart_id = ci.cart_id
 JOIN products p ON ci.product_id = p.product_id
