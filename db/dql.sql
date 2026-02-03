@@ -2,18 +2,12 @@
 -- DQL SCRIPT FOR ECOMMERCE APPLICATION
 -- PostgreSQL Compatible
 -- =========================================================
+-- This file contains ONLY SELECT queries
+-- =========================================================
 
 
 -- ---------------------------------------------------------
--- 1. SIGN-UP (Create User)
--- ---------------------------------------------------------
-
-INSERT INTO users (username, password, full_name, email)
-VALUES (?, ?, ?, ?);
-
-
--- ---------------------------------------------------------
--- 2. SIGN-IN (Login)
+-- 1. USER SIGN-IN (LOGIN)
 -- ---------------------------------------------------------
 
 SELECT
@@ -25,10 +19,11 @@ WHERE username = ? AND password = ?;
 
 
 -- ---------------------------------------------------------
--- 3. PROFILE FETCH
+-- 2. FETCH USER PROFILE
 -- ---------------------------------------------------------
 
 SELECT
+    user_id,
     username,
     full_name,
     email,
@@ -38,17 +33,7 @@ WHERE user_id = ?;
 
 
 -- ---------------------------------------------------------
--- 4. PROFILE UPDATE
--- ---------------------------------------------------------
-
-UPDATE users
-SET full_name = ?,
-    email = ?
-WHERE user_id = ?;
-
-
--- ---------------------------------------------------------
--- 5. PRODUCT SEARCH
+-- 3. PRODUCT SEARCH
 -- ---------------------------------------------------------
 
 SELECT
@@ -62,7 +47,7 @@ WHERE product_name ILIKE '%' || ? || '%';
 
 
 -- ---------------------------------------------------------
--- 6. GET CART ID
+-- 4. GET CART ID FOR USER
 -- ---------------------------------------------------------
 
 SELECT cart_id
@@ -71,24 +56,7 @@ WHERE user_id = ?;
 
 
 -- ---------------------------------------------------------
--- 7. ADD PRODUCT TO CART
--- ---------------------------------------------------------
-
-INSERT INTO cart_items (cart_id, product_id, quantity)
-VALUES (?, ?, ?);
-
-
--- ---------------------------------------------------------
--- 8. UPDATE CART ITEM QUANTITY
--- ---------------------------------------------------------
-
-UPDATE cart_items
-SET quantity = ?
-WHERE cart_id = ? AND product_id = ?;
-
-
--- ---------------------------------------------------------
--- 9. VIEW CART WITH TOTAL PRICE
+-- 5. VIEW CART WITH ITEM TOTALS
 -- ---------------------------------------------------------
 
 SELECT
@@ -104,7 +72,7 @@ WHERE c.user_id = ?;
 
 
 -- ---------------------------------------------------------
--- 10. CART GRAND TOTAL
+-- 6. VIEW CART GRAND TOTAL
 -- ---------------------------------------------------------
 
 SELECT
@@ -113,3 +81,7 @@ FROM cart c
 JOIN cart_items ci ON c.cart_id = ci.cart_id
 JOIN products p ON ci.product_id = p.product_id
 WHERE c.user_id = ?;
+
+-- =========================================================
+-- END OF DQL SCRIPT
+-- =========================================================
